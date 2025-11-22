@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/sonner';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -60,6 +61,8 @@ const CampaignDetails = () => {
     description: string;
   }>({ open: false, action: '', title: '', description: '' });
   const [transferAddress, setTransferAddress] = useState('');
+  const [useFunds, setUseFunds] = useState(false);
+  const [isDonation, setIsDonation] = useState(false);
 
   useEffect(() => {
     const mockCampaign: CampaignData = {
@@ -223,6 +226,24 @@ const CampaignDetails = () => {
       setActionDialog({ open: false, action: '', title: '', description: '' });
     } catch (error) {
       toast.error('Withdrawal failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFinalize = async () => {
+    setLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      console.log('Finalizing with parameters:', { useFunds, isDonation });
+
+      toast.success(`Campaign finalized! Use Funds: ${useFunds}, As Donation: ${isDonation}`);
+      setActionDialog({ open: false, action: '', title: '', description: '' });
+      setUseFunds(false);
+      setIsDonation(false);
+    } catch (error) {
+      toast.error('Finalize failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -571,6 +592,38 @@ const CampaignDetails = () => {
               </div>
             )}
 
+            {actionDialog.action === 'finalize' && (
+              <div className="space-y-4 py-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="use-funds"
+                    checked={useFunds}
+                    onCheckedChange={(checked) => setUseFunds(checked as boolean)}
+                  />
+                  <Label htmlFor="use-funds" className="cursor-pointer">
+                    Use Funds Anyway
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground ml-6">
+                  If enabled, funds will be used even if the goal was not reached
+                </p>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="as-donation"
+                    checked={isDonation}
+                    onCheckedChange={(checked) => setIsDonation(checked as boolean)}
+                  />
+                  <Label htmlFor="as-donation" className="cursor-pointer">
+                    Treat as Donation
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground ml-6">
+                  If enabled, the campaign will be finalized as a donation campaign
+                </p>
+              </div>
+            )}
+
             <AlertDialogFooter>
               <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
               <AlertDialogAction
@@ -580,6 +633,8 @@ const CampaignDetails = () => {
                     handleTransferCreator();
                   } else if (actionDialog.action === 'withdraw') {
                     handleWithdraw();
+                  } else if (actionDialog.action === 'finalize') {
+                    handleFinalize();
                   } else {
                     executeAction();
                   }

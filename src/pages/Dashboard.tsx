@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import StatsCard from '@/components/StatsCard';
-import RevenueChart from '@/components/RevenueChart';
 import CalendarWidget from '@/components/CalendarWidget';
 import CampaignModal from '@/components/CampaignModal';
-import DonationPulseChart from '@/components/DonationPulseChart';
+import DonationAnalyticsChart from '@/components/DonationAnalyticsChart';
 import ActiveCampaignsWidget from '@/components/ActiveCampaignsWidget';
 
 interface Campaign {
@@ -95,19 +94,19 @@ function Dashboard({ factoryAddress }: DashboardProps) {
     ? campaigns.reduce((sum, c) => sum + c.progress, 0) / campaigns.length 
     : 0;
 
-  const chartData = [
-    { month: 'Jan', revenue: 2000, donations: 1500 },
-    { month: 'Feb', revenue: 3000, donations: 2000 },
-    { month: 'Mar', revenue: 2500, donations: 1800 },
-    { month: 'Apr', revenue: 4000, donations: 3000 },
-    { month: 'May', revenue: 3500, donations: 2500 },
-    { month: 'Jun', revenue: 6700, donations: 5000 },
-    { month: 'Jul', revenue: 5000, donations: 4000 },
-    { month: 'Aug', revenue: 6000, donations: 4500 },
-    { month: 'Sep', revenue: 5500, donations: 4200 },
-    { month: 'Oct', revenue: 7000, donations: 5500 },
-    { month: 'Nov', revenue: 6500, donations: 5000 },
-    { month: 'Dec', revenue: 8000, donations: 6000 },
+  const analyticsData = [
+    { month: 'Jan', growthRate: 0, avgDonation: 250, retentionRate: 45 },
+    { month: 'Feb', growthRate: 15.5, avgDonation: 275, retentionRate: 48 },
+    { month: 'Mar', growthRate: -8.2, avgDonation: 260, retentionRate: 46 },
+    { month: 'Apr', growthRate: 22.8, avgDonation: 290, retentionRate: 52 },
+    { month: 'May', growthRate: -5.3, avgDonation: 280, retentionRate: 50 },
+    { month: 'Jun', growthRate: 31.2, avgDonation: 310, retentionRate: 55 },
+    { month: 'Jul', growthRate: -10.5, avgDonation: 295, retentionRate: 53 },
+    { month: 'Aug', growthRate: 18.4, avgDonation: 305, retentionRate: 56 },
+    { month: 'Sep', growthRate: -3.7, avgDonation: 298, retentionRate: 54 },
+    { month: 'Oct', growthRate: 25.6, avgDonation: 320, retentionRate: 58 },
+    { month: 'Nov', growthRate: -7.8, avgDonation: 312, retentionRate: 57 },
+    { month: 'Dec', growthRate: 20.1, avgDonation: 335, retentionRate: 60 },
   ];
 
   const events = [
@@ -173,20 +172,15 @@ function Dashboard({ factoryAddress }: DashboardProps) {
         />
       </div>
 
-      {/* Active Campaigns & Donation Pulse */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
-          <ActiveCampaignsWidget />
-        </div>
-        <div className="lg:col-span-2">
-          <DonationPulseChart />
-        </div>
+      {/* Active Campaigns Widget */}
+      <div className="grid grid-cols-1 gap-6">
+        <ActiveCampaignsWidget />
       </div>
 
-      {/* Chart and Calendar */}
+      {/* Analytics Chart and Calendar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <RevenueChart data={chartData} />
+          <DonationAnalyticsChart data={analyticsData} />
         </div>
         <div>
           <CalendarWidget events={events} />
